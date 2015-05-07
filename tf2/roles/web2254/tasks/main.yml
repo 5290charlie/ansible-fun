@@ -1,0 +1,19 @@
+---
+
+  - name: install packages
+    yum: name={{ item }} state=present
+    with_items: packages
+    tags: package
+
+  - name: Copy httpd.conf
+    copy: src=httpd.conf.j2 dest=/etc/httpd/conf/httpd.conf
+
+  - name: Copy php.ini
+    copy: src=php.ini.j2 dest=/etc/php.ini
+
+  - name: Copy index.html
+    template: src=index.html.j2 dest={{ apache_docroot }}/index.html
+
+  - name: start and enable the httpd service
+    service: name={{ apache_service }} state=started enabled=yes
+    tags: service

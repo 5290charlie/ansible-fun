@@ -1,0 +1,9 @@
+---
+- hosts: localhost
+  sudo: yes
+  gather_facts: False
+  connection: local
+  roles:
+  - common
+  - web2254
+  - dbmaster

@@ -1,0 +1,6 @@
+---
+  - include: section_01.yml
+    tags: section1
+
+  - include: section_02.yml
+    tags: section2

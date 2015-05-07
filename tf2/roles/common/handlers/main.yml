@@ -1,0 +1,7 @@
+---
+
+  - name: Reload sshd
+    service: name=sshd state=restarted
+
+  - name: Reload httpd
+    service: name=httpd state=restarted
