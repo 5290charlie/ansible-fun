@@ -1,8 +1,7 @@
 ---
-- hosts: localhost
+- hosts: all
   sudo: yes
-  gather_facts: False
-  connection: local
+  gather_facts: yes
   roles:
   - common
   - web2254
