@@ -25,3 +25,5 @@ packages:
 
 apache_service: httpd
 apache_docroot: /var/www/html
+zend_loader: "ZendGuardLoader-70429-PHP-5.4-linux-glibc23-x86_64"
+zend_tarball: "{{ zend_loader }}.tar.gz"

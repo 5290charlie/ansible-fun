@@ -10,6 +10,9 @@
     yum: name=tzdata state=present
     tags: [timezone]
 
+  - name: install vim
+    yum: name=vim state=present
+
 # Remove unwanted packages
 
   - name: Remove telnet client
@@ -64,11 +67,11 @@
     yum: name=dhcp state=absent
     tags: dhcp server
 
-  - name: Remove LDAP
+  - name: Remove LDAP clients
     yum: name=openldap-clients state=absent
     tags: ldap client
 
-  - name: Remove LDAP
+  - name: Remove LDAP servers
     yum: name=openldap-servers state=absent
     tags: ldap server
 
@@ -99,5 +102,3 @@
   - name: Configure Mail Transfer Agent for Local-Only Mode
     yum: name=postfix state=present
     tags: postfix
-
-
