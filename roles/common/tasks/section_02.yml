@@ -17,8 +17,8 @@
     tags: [timezone]
 
 # Disable unwanted services
-  # - name: Disable selinux
-  #   selinux: state=disabled
+  - name: Disable selinux
+    selinux: state=disabled
   #
   # - name: Disable chargen-dgram (check if exists)
   #   stat: path=/etc/xinetd.d/chargen-dgram

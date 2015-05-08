@@ -1,4 +1,4 @@
----  
+---
 
   - name: install packages
     yum: name={{ item }} state=present
@@ -40,7 +40,7 @@
     template: src=index.html.j2 dest={{ apache_docroot }}/index.html
 
   - name: Create Vagrant sandbox
-    command: /bin/mv -i /var/www /vagrant/sandbox
+    command: /bin/mv /var/www /vagrant/sandbox
     args:
       creates: /vagrant/sandbox
 
