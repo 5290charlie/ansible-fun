@@ -76,4 +76,15 @@ Vagrant.configure(2) do |config|
     ansible.playbook = "ansible-fun/main.yml"
 #	ansible.verbose = "extra"
   end
+
+  config.trigger.after [:provision, :up, :reload] do
+      system('echo "
+        rdr pass on lo0 inet proto tcp from any to 127.0.0.1 port 80 -> 127.0.0.1 port 8080  
+   #     rdr pass on lo0 inet proto tcp from any to 127.0.0.1 port 443 -> 127.0.0.1 port 4443
+  " | sudo pfctl -ef - > /dev/null 2>&1; echo "==> Fowarding Ports: 80 -> 8080 & Enabling pf"')  
+  end
+
+  config.trigger.after [:halt, :destroy] do
+    system("sudo pfctl -df /etc/pf.conf > /dev/null 2>&1; echo '==> Removing Port Forwarding & Disabling pf'")
+  end
 end

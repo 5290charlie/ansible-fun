@@ -1,13 +1,5 @@
----
+---  
 
-  - name: Create Vagrant sandbox
-    command: /bin/mv -i /var/www /vagrant/sandbox
-    args:
-      creates: /vagrant/sandbox
-
-  - name: Create /var/www/ as symlink to Vagrant sandbox
-    command: /bin/ln -s /vagrant/sandbox /var/www
-    
   - name: install packages
     yum: name={{ item }} state=present
     with_items: packages
@@ -46,6 +38,14 @@
 
   - name: Copy index.html
     template: src=index.html.j2 dest={{ apache_docroot }}/index.html
+
+  - name: Create Vagrant sandbox
+    command: /bin/mv -i /var/www /vagrant/sandbox
+    args:
+      creates: /vagrant/sandbox
+
+  - name: Create /var/www/ as symlink to Vagrant sandbox
+    command: /bin/ln -s /vagrant/sandbox /var/www
 
   - name: start and enable the httpd service
     service: name={{ apache_service }} state=started enabled=yes
