@@ -8,14 +8,32 @@
   - name: install mysql56 x64 server
     yum: name=mysql-community-server state=present
 
+  - name: add mysql user to vagrant group
+    command: usermod -a -G vagrant mysql
+
   - name: create /var/log/mysql
     command: mkdir /var/log/mysql
+    args:
+      creates: /var/log/mysql
+
+  - name: update mysql log permissions
+    command: chown -R mysql:mysql /var/log/mysql
+
+  - name: create /vagrant/mysql
+    command: mkdir /vagrant/mysql
+    args:
+      creates: /vagrant/mysql
+
+  # - name: create link /var/lib/mysql -> /vagrant/mysql
+  #   command: ln -s /vagrant/mysql /var/lib/mysql
+  #   args:
+  #     creates: /var/lib/mysql
+
+  - name: Add db.intermundomedia.com to hosts file
+    lineinfile: dest=/etc/hosts line='127.0.0.1 db.intermundomedia.com' state=present
 
   - name: copy my.cnf to /etc/my.cnf
     copy: src=master.my.cnf.j2 dest=/etc/my.cnf
-
-  - name: Add db.intermundomedia.com to hosts file
-    command: /bin/echo "127.0.0.1  db.intermundomedia.com" >> /etc/hosts
 
   - name: start and enable mysqld service
     service: name=mysqld state=started enabled=yes

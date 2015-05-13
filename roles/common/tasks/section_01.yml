@@ -13,6 +13,9 @@
   - name: install vim
     yum: name=vim state=present
 
+  - name: install screen
+    yum: name=screen state=present
+
 # Remove unwanted packages
 
   # - name: Remove telnet client

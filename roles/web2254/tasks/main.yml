@@ -5,47 +5,65 @@
     with_items: packages
     tags: package
 
+  - name: add apache user to vagrant group
+    command: usermod -a -G vagrant apache
+
   - name: Copy httpd.conf
     copy: src=httpd.conf.j2 dest=/etc/httpd/conf/httpd.conf
 
-  - name: Download Zend Guard Loader Tarball
-    command: /usr/bin/wget http://brutebyte.com/modules/{{ zend_tarball }}
+  - name: Compile and install xdebug module
+    command: /usr/bin/pecl install Xdebug
+    args:
+      creates: /usr/lib64/php/modules/xdebug.so
+
+  - name: Download and install zendGuardLoader module
+    command: "{{ item }}"
+    with_items:
+      - /usr/bin/curl -O http://brutebyte.com/modules/{{ zend_tarball }}
+      - tar -zxvf {{ zend_tarball }}
+      - cp {{ zend_loader }}/php-5.4.x/ZendGuardLoader.so /usr/lib64/php/modules/
+      - rm -rf {{ zend_loader }}*
     args:
       chdir: /tmp
-      creates: /tmp/{{ zend_tarball }}
-
-  - name: Untar Zend Guard Loader
-    command: /bin/tar -zxvf {{ zend_tarball }}
-    args:
-      chdir: /tmp
-
-  - name: Install Zend Guard Loader Module
-    command: /bin/cp /tmp/{{ zend_loader }}/php-5.4.x/ZendGuardLoader.so /usr/lib64/php/modules/
+      creates: /usr/lib64/php/modules/ZendGuardLoader.so
 
   - name: Copy php.ini
     copy: src=php.ini.j2 dest=/etc/php.ini
 
   - name: Create secure directory for smarty templates
-    command: /bin/mkdir -p /usr/local/secure
+    command: mkdir -p /usr/local/secure
     args:
       creates: /usr/local/secure
-
-  - name: Configure secure template directory permissions
-    command: "{{ item }}"
-    with_items:
-      - /bin/chown -R :apache /usr/local/secure
-      - /bin/chmod -R 775 /usr/local/secure
 
   - name: Copy index.html
     template: src=index.html.j2 dest={{ apache_docroot }}/index.html
 
-  - name: Create Vagrant sandbox
-    command: /bin/mv /var/www /vagrant/sandbox
+  - name: Configure secure template directory permissions and create sandbox
+    command: "{{ item }}"
+    with_items:
+      - chown -R :apache /usr/local/secure
+      - chmod -R 775 /usr/local/secure
+
+  - name: Create vagrant sandbox
+    command: mkdir /vagrant/sandbox
     args:
       creates: /vagrant/sandbox
 
-  - name: Create /var/www/ as symlink to Vagrant sandbox
-    command: /bin/ln -s /vagrant/sandbox /var/www
+  - name: Move httpd html directory
+    command: mv /var/www/html /vagrant/sandbox/
+    args:
+      creates: /vagrant/sandbox/html
+
+  - name: Move httpd error directory
+    command: mv /var/www/error /vagrant/sandbox/
+    args:
+      creates: /vagrant/sandbox/error
+
+  - name: Link /var/www to sandbox
+    command: "{{ item }}"
+    with_items:
+      - rm -rf /var/www
+      - ln -s /vagrant/sandbox /var/www
 
   - name: start and enable the httpd service
     service: name={{ apache_service }} state=started enabled=yes

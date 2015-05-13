@@ -2,20 +2,10 @@
 - hosts: all
   sudo: yes
   gather_facts: yes
-  vars:
-    zend_loader: "ZendGuardLoader-70429-PHP-5.4-linux-glibc23-x86_64"
-    zend_tarball: "{{ zend_loader }}.tar.gz"
   tasks:
-    - name: Download Zend Guard Loader Tarball
-      command: /usr/bin/wget http://brutebyte.com/modules/{{ zend_tarball }}
-      args:
-        chdir: /tmp
-        creates: /tmp/{{ zend_tarball }}
-
-    - name: Untar Zend Guard Loader
-      command: /bin/tar -zxvf {{ zend_tarball }}
-      args:
-        chdir: /tmp
-
-    - name: Install Zend Guard Loader Module
-      command: /bin/cp /tmp/{{ zend_loader }}/php-5.4.x/ZendGuardLoader.so /usr/lib64/php/modules/
+    - name: install libselinux
+      yum: name=libselinux-python state=present
+      tags: libselinux-python
+      
+    - name: Add db.intermundomedia.com to hosts file
+      lineinfile: dest=/etc/hosts line='127.0.0.1 db.intermundomedia.com' state=present

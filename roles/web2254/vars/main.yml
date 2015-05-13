@@ -22,6 +22,10 @@ packages:
   - php54-soap
   - php54-tidy
   - php54-xml
+  - gcc
+  - gcc-c++
+  - autoconf
+  - automake
 
 apache_service: httpd
 apache_docroot: /var/www/html
